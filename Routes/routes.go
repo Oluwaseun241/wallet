@@ -1,9 +1,13 @@
 package Routes
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+  "github.com/Oluwaseun241/wallet/Models"
+  "gorm.io/gorm"
+)
 
-func setup(app *fiber.App) {
+func Setup(app *fiber.App, db *gorm.DB) {
   app.Get("/", func(c *fiber.Ctx) error {
-    return c.SendString("Hello")
+    return Models.GetUser(c,db)
   })
 }

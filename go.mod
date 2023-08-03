@@ -1,4 +1,4 @@
-module github.com/Oluwaseun241/wallet.git
+module github.com/Oluwaseun241/wallet
 
 go 1.20
 

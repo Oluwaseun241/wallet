@@ -3,27 +3,29 @@ package main
 import (
 	"fmt"
 
-	"github.com/Oluwaseun241/wallet.git/Models"
+	"github.com/Oluwaseun241/wallet/Models"
+  routes "github.com/Oluwaseun241/wallet/Routes"
 	"github.com/glebarez/sqlite"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
 
-func initDB(){
+func initDB() *gorm.DB{
   db, err := gorm.Open(sqlite.Open("sqlite.db"), &gorm.Config{})
   if err != nil {
     panic("failed to connect to DB")
   }
   fmt.Println("DB connected")
-  db.AutoMigrate(&models.User{})
+  db.AutoMigrate(&Models.User{})
   fmt.Println("DB migrated")
+  return db
 }
 
 func main() {
+  db := initDB()
+
   app := fiber.New()
-  
-  initDB()
-  app.Use(app)
+  routes.Setup(app,db)
 
   app.Listen(":3000")
 }

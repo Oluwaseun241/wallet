@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/Oluwaseun241/wallet.git/models"
+	"github.com/Oluwaseun241/wallet.git/Models"
 	"github.com/glebarez/sqlite"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -23,10 +23,7 @@ func main() {
   app := fiber.New()
   
   initDB()
-
-  app.Get("/", func(c *fiber.Ctx) error {
-    return c.SendString("Hello")
-  })
+  app.Use(app)
 
   app.Listen(":3000")
 }

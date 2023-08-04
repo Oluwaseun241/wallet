@@ -23,10 +23,10 @@ func (User) TableName() string {
 
 //Custom validation
 func (u *User) Validate(db *gorm.DB) {
-  if u.Name == "" {
+  switch {
+  case u.Name == "":
     db.AddError(gorm.ErrInvalidValue)
-  }
-  if len(u.Password) < 8 {
+  case len(u.Password) < 8:
     db.AddError(gorm.ErrModelValueRequired)
   }
 }

@@ -10,4 +10,7 @@ func Setup(app *fiber.App, db *gorm.DB) {
   app.Get("/", func(c *fiber.Ctx) error {
     return Models.GetUser(c,db)
   })
+  app.Post("/", func(c *fiber.Ctx) error {
+    return Models.NewUser(c,db)
+  })
 }

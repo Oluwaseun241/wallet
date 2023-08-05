@@ -1,19 +1,24 @@
 package controllers
 
 import (
-  "gorm.io/gorm"
-  "github.com/Oluwaseun241/wallet/Models"
-  "github.com/gofiber/fiber/v2"
+	"github.com/Oluwaseun241/wallet/Models"
+	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 func GetUser(c *fiber.Ctx, db *gorm.DB) error {
   var users []Models.User
   db.Find(&users)
-  return c.Status(200).JSON(users)
+  return c.Status(fiber.StatusOK).JSON(users)
 }
 
+// Create New User
 func NewUser(c *fiber.Ctx, db *gorm.DB) error {
-  user := new(Models.User)
+  //user := new(Models.User)
+  user := &Models.User{
+    ID: uuid.New(),
+  }
   if err := c.BodyParser(user); err != nil {
     return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
       "error": "Invalid request format",
@@ -36,4 +41,28 @@ func NewUser(c *fiber.Ctx, db *gorm.DB) error {
     })
   }
   return c.Status(fiber.StatusCreated).JSON(user)
+}
+
+func LoginUser(c *fiber.Ctx, db *gorm.DB) error {
+  loginData := &Models.SignInInput{}
+  //user := Models.User{}
+  if err := c.BodyParser(&loginData); err != nil {
+    return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+      "error": "Invalid request format",
+    })
+  }
+
+  user, err := Models.Authenticate(db, loginData.Email, loginData.Password)
+  //user, err := &Models.Authenticate(db, loginData.Email, loginData.Password)
+  if err != nil {
+      return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+          "error": "Invalid credentials",
+      })
+  }
+
+  //token := generateAuthToken(user.ID)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Login successful",
+		//"token":   token,
+	})
 }

@@ -5,18 +5,32 @@ import (
   "errors"
 
 	"github.com/google/uuid"
-
+  "golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
+
 type User struct {
   gorm.Model
-  Id  uuid.UUID `gorm:"type:uuid;primaryKey;not null"`
+  ID  uuid.UUID `gorm:"type:uuid;primaryKey;not null"`
   Name  string `gorm:"type:varchar(50);not null"`
   Email string `gorm:"uniqueIndex;not null"`
   Password  string `gorm:"not null"`
   CreatedAt time.Time `gorm:"not null;autoCreateTime"`
 	UpdatedAt time.Time `gorm:"not null;autoUpdateTime"`
+}
+
+type SignInInput struct {
+  Email string  `json:"email" binding:"required"`
+  Password  string  `json:"password" binding:"required"`
+}
+
+type UserResponse struct {
+	ID        uuid.UUID `json:"id,omitempty"`
+	Name      string    `json:"name,omitempty"`
+	Email     string    `json:"email,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (User) TableName() string {
@@ -31,4 +45,20 @@ func (u *User) Validate(db *gorm.DB) {
   case len(u.Password) < 8:
     db.AddError(errors.New("Password must be at least 8 characters"))
   }
+}
+
+// Auth
+func (u *User) Authenticate(db *gorm.DB, email, password string) (*User, error) {
+    var user User
+    result := db.Where("email = ?", email).First(&user)
+    if result.Error != nil {
+        return nil, result.Error
+    }
+
+    // Validate password
+    if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+        return nil, err
+    }
+
+    return &user, nil
 }

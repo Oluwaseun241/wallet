@@ -9,7 +9,7 @@ import (
 
 
 func main() {
-  db := config.initDB()
+  db := config.InitDB() 
   app := fiber.New()
   routes.Setup(app,db)
 

@@ -8,7 +8,6 @@ import(
 )
 func initDB() *gorm.DB{
   db, err := gorm.Open(sqlite.Open("sqlite.db"), &gorm.Config{})
-  //validations.RegisterCallbacks(db)
   if err != nil {
     panic("failed to connect to DB")
   }

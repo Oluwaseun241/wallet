@@ -42,27 +42,3 @@ func NewUser(c *fiber.Ctx, db *gorm.DB) error {
   }
   return c.Status(fiber.StatusCreated).JSON(user)
 }
-
-func LoginUser(c *fiber.Ctx, db *gorm.DB) error {
-  loginData := &Models.SignInInput{}
-  //user := Models.User{}
-  if err := c.BodyParser(&loginData); err != nil {
-    return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-      "error": "Invalid request format",
-    })
-  }
-
-  user, err := Models.Authenticate(db, loginData.Email, loginData.Password)
-  //user, err := &Models.Authenticate(db, loginData.Email, loginData.Password)
-  if err != nil {
-      return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-          "error": "Invalid credentials",
-      })
-  }
-
-  //token := generateAuthToken(user.ID)
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "Login successful",
-		//"token":   token,
-	})
-}

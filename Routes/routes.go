@@ -8,9 +8,9 @@ import (
 
 func Setup(app *fiber.App, db *gorm.DB) {
   app.Get("/", func(c *fiber.Ctx) error {
-    return Controllers.GetUser(c,db)
+    return controllers.GetUser(c,db)
   })
   app.Post("/", func(c *fiber.Ctx) error {
-    return Controllers.NewUser(c,db)
+    return controllers.NewUser(c,db)
   })
 }

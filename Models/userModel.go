@@ -46,3 +46,20 @@ func (u *User) Validate(db *gorm.DB) {
     db.AddError(errors.New("Password must be at least 8 characters"))
   }
 }
+
+
+func Authenticate(db *gorm.DB, email, password string) (*User, error) {
+	var user User
+	result := db.Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	// Validate password
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+

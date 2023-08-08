@@ -3,29 +3,25 @@ package config
 import (
 	"fmt"
 	"time"
+  "github.com/google/uuid"
 
 	"github.com/golang-jwt/jwt"
 )
 
-func GenerateToken(ttl time.Duration, payload interface{}, secretJWTKey string) (string, error) {
-  token := jwt.New(jwt.SigningMethodHS256)
+func GenerateToken(userID uuid.UUID) (string, error) { 
+  claims := jwt.MapClaims{
+    "sub": userID.String(),
+    "exp": time.Now().Add(time.Hour * 24).Unix(),
+  }
 
-  now := time.Now().UTC()
-  claims := token.Claims.(jwt.MapClaims)
-
-  claims["sub"] = payload
-  claims["exp"] = now.Add(ttl).Unix()
-  claims["iat"] = now.Unix()
-  claims["nbf"] = now.Unix()
-
-  tokenString, err := token.SignedString([]byte(secretJWTKey))
-
+  token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+  secretKey := []byte("manchester1")
+  tokenString, err := token.SignedString(secretKey)
   if err != nil {
     return "", fmt.Errorf("Generating JWT Token failed: %w", err)
   }
   return tokenString, nil
 }
 
-func ValidateToken(token string) {
+// func ValidateToken(token string) {
 
-}

@@ -2,7 +2,7 @@ package Routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-  "github.com/Oluwaseun241/wallet/Controllers"
+  "github.com/Oluwaseun241/wallet/controllers"
   "gorm.io/gorm"
 )
 

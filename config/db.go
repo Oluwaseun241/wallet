@@ -3,7 +3,7 @@ package config
 import(
   "gorm.io/gorm"
   "fmt"
-  "github.com/Oluwaseun241/wallet/Models"
+  "github.com/Oluwaseun241/wallet/models"
   "github.com/glebarez/sqlite"
 )
 func InitDB() *gorm.DB{

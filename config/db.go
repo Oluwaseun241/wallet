@@ -6,6 +6,9 @@ import(
   "github.com/Oluwaseun241/wallet/models"
   "github.com/glebarez/sqlite"
 )
+
+var DB *gorm.DB
+
 func InitDB() *gorm.DB{
   db, err := gorm.Open(sqlite.Open("sqlite.db"), &gorm.Config{})
   if err != nil {

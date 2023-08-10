@@ -1,21 +1,21 @@
 package controllers
 
 import (
+  db "github.com/Oluwaseun241/wallet/config"
 	"github.com/Oluwaseun241/wallet/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
-func GetUser(c *fiber.Ctx, db *gorm.DB) error {
+//Get all users
+func GetUser(c *fiber.Ctx) error {
   var users []Models.User
-  db.Find(&users)
+  db.DB.Find(&users)
   return c.Status(fiber.StatusOK).JSON(users)
 }
 
 // Create New User
-func NewUser(c *fiber.Ctx, db *gorm.DB) error {
-  //user := new(Models.User)
+func NewUser(c *fiber.Ctx) error {
   user := &Models.User{
     ID: uuid.New(),
   }
@@ -25,16 +25,16 @@ func NewUser(c *fiber.Ctx, db *gorm.DB) error {
     })
   }
 
-  // Validate
-  user.Validate(db)
-  if db.Error != nil {
+  // Validate data(db)
+  user.Validate(db.DB)
+  if db.DB.Error != nil {
     return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
       "error": "Validation failed",
-      "details": db.Error.Error(),
+      "details": db.DB.Error.Error(),
     })
   }
 
-  result := db.Create(&user)
+  result := db.DB.Create(&user)
   if result.Error != nil {
     return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
       "error": "Failed to create user",

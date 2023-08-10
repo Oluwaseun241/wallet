@@ -1,19 +1,12 @@
-package Routes
+package routes
 
 import (
+	"github.com/Oluwaseun241/wallet/controllers"
 	"github.com/gofiber/fiber/v2"
-  "github.com/Oluwaseun241/wallet/controllers"
-  "gorm.io/gorm"
 )
 
-func Setup(app *fiber.App, db *gorm.DB) {
-  app.Get("/", func(c *fiber.Ctx) error {
-    return controllers.GetUser(c,db)
-  })
-  app.Post("/api/auth/register", func(c *fiber.Ctx) error {
-    return controllers.NewUser(c,db)
-  })
-  app.Post("/api/auth/login", func(c *fiber.Ctx) error {
-    return controllers.LoginUser(c,db)
-  })
+func Setup(app *fiber.App) {
+  app.Get("/", controllers.GetUser)
+  app.Post("/api/auth/register", controllers.NewUser)
+  app.Post("/api/auth/login", controllers.LoginUser)
 }

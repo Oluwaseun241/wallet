@@ -2,7 +2,7 @@ package main
 
 import (
 
-  routes "github.com/Oluwaseun241/wallet/routes"	
+  "github.com/Oluwaseun241/wallet/routes"	
 	"github.com/gofiber/fiber/v2"
   "github.com/Oluwaseun241/wallet/config"
 )

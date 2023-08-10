@@ -2,7 +2,7 @@ package controllers
 
 import (
   db "github.com/Oluwaseun241/wallet/config"
-	"github.com/Oluwaseun241/wallet/models"
+	Models "github.com/Oluwaseun241/wallet/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )

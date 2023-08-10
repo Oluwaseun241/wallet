@@ -9,9 +9,10 @@ import (
 
 
 func main() {
-  db := config.InitDB() 
+  // db connection
+  config.InitDB() 
   app := fiber.New()
-  routes.Setup(app,db)
+  routes.Setup(app)
 
   app.Listen(":3000")
 }

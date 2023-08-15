@@ -1,9 +1,11 @@
 package controllers
 
 import (
-  "github.com/gofiber/fiber/v2"
-  Models "github.com/Oluwaseun241/wallet/models"
-  db "github.com/Oluwaseun241/wallet/config"
+
+	db "github.com/Oluwaseun241/wallet/config"
+	Models "github.com/Oluwaseun241/wallet/models"
+  "github.com/Oluwaseun241/wallet/config"
+	"github.com/gofiber/fiber/v2"
 )
 
 //User Login
@@ -32,9 +34,17 @@ func LoginUser(c *fiber.Ctx) error {
       "message": "Invalid Credential",
     })
   }
-
+  userID := user.ID
+  token, err := config.GenerateToken(userID)
+  if err != nil {
+    return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+      "success": false,
+      "message": "Failed to generate token",
+    })
+  }
   return c.Status(fiber.StatusCreated).JSON(fiber.Map{
     "success": true,
     "message": "Success",
+    "token": token,
   })
 }

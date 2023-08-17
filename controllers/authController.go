@@ -2,9 +2,9 @@ package controllers
 
 import (
 
+	"github.com/Oluwaseun241/wallet/config"
 	db "github.com/Oluwaseun241/wallet/config"
 	Models "github.com/Oluwaseun241/wallet/models"
-  "github.com/Oluwaseun241/wallet/config"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -17,23 +17,16 @@ func LoginUser(c *fiber.Ctx) error {
       "message": "Invalid request format",
     })
   }
-  userEmail := loginReq.Email
-  userPassword := loginReq.Password
-
-  var user Models.User
-  if err := db.DB.Where("Email=?", userEmail).First(&user).Error; err != nil {
+  // Auth
+  user, err := Models.Authenticate(db.DB, loginReq.Email, loginReq.Password)
+  if err != nil {
     return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-      "success": false,
-      "message": "Invalid Credential",
-    })
+			"success": false,
+			"message": "Invalid credentials",
+		})
   }
-
-  if user.Password != userPassword {
-    return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-      "success": false,
-      "message": "Invalid Credential",
-    })
-  }
+  
+  // JWT
   userID := user.ID
   token, err := config.GenerateToken(userID)
   if err != nil {
@@ -42,9 +35,15 @@ func LoginUser(c *fiber.Ctx) error {
       "message": "Failed to generate token",
     })
   }
+
   return c.Status(fiber.StatusCreated).JSON(fiber.Map{
     "success": true,
     "message": "Success",
     "token": token,
   })
+}
+
+// Logout
+func LogoutUser() {
+
 }

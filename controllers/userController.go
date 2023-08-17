@@ -1,7 +1,8 @@
 package controllers
 
 import (
-  db "github.com/Oluwaseun241/wallet/config"
+	"github.com/Oluwaseun241/wallet/auth"
+	db "github.com/Oluwaseun241/wallet/config"
 	Models "github.com/Oluwaseun241/wallet/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -19,11 +20,21 @@ func NewUser(c *fiber.Ctx) error {
   user := &Models.User{
     ID: uuid.New(),
   }
+
   if err := c.BodyParser(user); err != nil {
     return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
       "error": "Invalid request format",
     })
   }
+  
+  // Hashing
+  hashedPassword, err := auth.HashPassword(user.Password)
+  if err != nil {
+    return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+      "error": "Failed to hash password",
+    })
+  }
+  user.Password = hashedPassword
 
   // Validate data(db)
   user.Validate(db.DB)

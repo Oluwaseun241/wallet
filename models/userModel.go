@@ -1,11 +1,11 @@
 package models
 
-import (	
+import (
+	"errors"
 	"time"
-  "errors"
 
+	"github.com/Oluwaseun241/wallet/auth"
 	"github.com/google/uuid"
-  "golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -56,7 +56,7 @@ func Authenticate(db *gorm.DB, email, password string) (*User, error) {
 	}
 
 	// Validate password
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+	if err := auth.VerifyPassword(user.Password, password); err != nil {
 		return nil, err
 	}
 

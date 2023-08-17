@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/Oluwaseun241/wallet/controllers"
 	"github.com/gofiber/fiber/v2"
+  //"gorm.io/gorm"
 )
 
 func Setup(app *fiber.App) {

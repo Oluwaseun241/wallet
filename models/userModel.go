@@ -18,6 +18,7 @@ type User struct {
   Password  string `gorm:"not null"`
   CreatedAt time.Time `gorm:"not null;autoCreateTime"`
 	UpdatedAt time.Time `gorm:"not null;autoUpdateTime"`
+  Wallets []Wallet
 }
 
 type SignInInput struct {

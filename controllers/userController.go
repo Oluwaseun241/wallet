@@ -62,4 +62,57 @@ func NewUser(c *fiber.Ctx) error {
     })
   }
   return c.Status(fiber.StatusCreated).JSON(user)
-}	
+}
+
+//Get by ID
+func GetUserId(c* fiber.Ctx) error {
+  userId := c.Params("userId")
+  var user Models.User
+  if err := db.DB.Select("*").Where("id=?",userId).First(&user).Error; err != nil {
+    return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+      "error": "User not found",
+    })
+  }
+  userResponse := Models.UserResponse{
+    ID:        user.ID,
+		Name:      user.Name,
+		Email:     user.Email,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+  }
+  return c.Status(fiber.StatusOK).JSON(userResponse)
+}
+
+//Update User
+func UpdateUser(c *fiber.Ctx) error {
+  userId := c.Params("userId")
+  var user Models.User
+
+  result := db.DB.Find(&user, "id=?", userId)
+  if result.Error != nil {
+    return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+      "error": "User not found",
+    })
+  }
+
+  var updatedUser Models.User
+  if err := c.BodyParser(&updatedUser); err != nil {
+    return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+      "error": "Invalid request format",
+    })
+  }
+
+  user.Name = updatedUser.Name
+  user.Email = updatedUser.Email
+
+  result = db.DB.Save(&user)
+  if result.Error != nil {
+    return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to update user",
+		})
+  }
+
+  return c.Status(fiber.StatusOK).JSON(fiber.Map{
+    "message": "User updated successfully",
+  })
+}

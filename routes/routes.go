@@ -7,7 +7,10 @@ import (
 )
 
 func Setup(app *fiber.App) {
-  app.Get("/", controllers.GetUser)
+  // users routes
+  app.Get("/api/users", controllers.GetUser)
+  app.Get("/api/users/:userId", controllers.GetUserId)
+  app.Put("/api/users/:userId", controllers.UpdateUser)
   app.Post("/api/auth/register", controllers.NewUser)
   //auth routes
   app.Post("/api/auth/login", controllers.LoginUser)

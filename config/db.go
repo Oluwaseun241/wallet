@@ -16,6 +16,6 @@ func InitDB() {
   }
   fmt.Println("DB connected")
   DB = db
-  db.AutoMigrate(&Models.User{})
+  db.AutoMigrate(&Models.User{},&Models.Wallet{})
   fmt.Println("DB migrated")
 }

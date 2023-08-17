@@ -12,7 +12,17 @@ import (
 func GetUser(c *fiber.Ctx) error {
   var users []Models.User
   db.DB.Find(&users)
-  return c.Status(fiber.StatusOK).JSON(users)
+  var userResponses []Models.UserResponse
+	for _, user := range users {
+		userResponses = append(userResponses, Models.UserResponse{
+			ID:        user.ID,
+			Name:      user.Name,
+			Email:     user.Email,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		})
+	}
+  return c.Status(fiber.StatusOK).JSON(userResponses)
 }
 
 // Create New User

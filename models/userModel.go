@@ -25,13 +25,13 @@ type SignInInput struct {
   Password  string  `json:"password" binding:"required"`
 }
 
-// type UserResponse struct {
-// 	ID        uuid.UUID `json:"id,omitempty"`
-// 	Name      string    `json:"name,omitempty"`
-// 	Email     string    `json:"email,omitempty"`
-// 	CreatedAt time.Time `json:"created_at"`
-// 	UpdatedAt time.Time `json:"updated_at"`
-// }
+type UserResponse struct {
+	ID        uuid.UUID `json:"id,omitempty"`
+	Name      string    `json:"name,omitempty"`
+	Email     string    `json:"email,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
 
 func (User) TableName() string {
   return "users"

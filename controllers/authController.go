@@ -45,5 +45,5 @@ func LoginUser(c *fiber.Ctx) error {
 
 // Logout
 func LogoutUser() {
-
+  
 }

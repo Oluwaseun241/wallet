@@ -55,13 +55,27 @@ func NewUser(c *fiber.Ctx) error {
     })
   }
 
+  var existingUser Models.User
+  if err := db.DB.Where("email = ?", user.Email).First(&existingUser).Error; err == nil {
+    return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+      "error": "User with this email already exists",
+    })
+  }
+
   result := db.DB.Create(&user)
   if result.Error != nil {
     return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
       "error": "Failed to create user",
     })
   }
-  return c.Status(fiber.StatusCreated).JSON(user)
+  userResponse := Models.UserResponse{
+    ID:        user.ID,
+		Name:      user.Name,
+		Email:     user.Email,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+  }
+  return c.Status(fiber.StatusCreated).JSON(userResponse)
 }
 
 //Get by ID

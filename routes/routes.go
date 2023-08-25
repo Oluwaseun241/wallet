@@ -18,4 +18,5 @@ func Setup(app *fiber.App) {
 
   //wallet routes
   app.Post("/api/users/wallet", config.AuthMiddleware, controllers.NewWallet)
+  app.Post("/api/users/wallet/:wallet_number", controllers.UpdateWallet)
 }

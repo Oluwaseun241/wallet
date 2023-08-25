@@ -55,3 +55,36 @@ func NewWallet(c *fiber.Ctx) error {
 }
   return c.Status(fiber.StatusCreated).JSON(walletResponse)
 }
+
+func UpdateWallet(c *fiber.Ctx) error {
+  wallet_number := c.Params("wallet_number")
+  var wallet Models.Wallet
+
+  result := db.DB.Find(&wallet, "wallet_number=?", wallet_number)
+  if result.Error != nil {
+    return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+      "error": "Wallet number not found",
+    })
+  }
+  
+  var updatedWallet Models.Wallet
+  if err := c.BodyParser(&updatedWallet); err != nil {
+    return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+      "error": "Invalid request format",
+    })
+  }
+
+  wallet.Balance += updatedWallet.Balance
+
+  result = db.DB.Save(&wallet)
+  if result.Error != nil {
+    return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+      "error": "Failed to update wallet",
+    })
+  }
+
+  return c.Status(fiber.StatusOK).JSON(fiber.Map{
+    "message": "Wallet updated sucessfully",
+    "balance": wallet.Balance,
+  })
+}

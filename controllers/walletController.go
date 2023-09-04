@@ -8,6 +8,27 @@ import (
 	"github.com/google/uuid"
 )
 
+func GetWallet(c *fiber.Ctx) error {
+  userIDStr := c.Params("userId")
+  
+  // Convert the userId string to a UUID
+  userID, err := uuid.Parse(userIDStr)
+  if err != nil {
+    return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+      "error": "Invalid userId format",
+    })
+  }
+  
+  // Find the wallet associated with the user by userID
+  var wallet Models.Wallet
+  if err := db.DB.First(&wallet, "user_id = ?", userID).Error; err != nil {
+    return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+      "error": "Wallet not found",
+    })
+  }
+  return c.Status(fiber.StatusOK).JSON(wallet)
+}
+
 func NewWallet(c *fiber.Ctx) error {
   userIDStr := c.Locals("userID").(string)
   
@@ -56,7 +77,7 @@ func NewWallet(c *fiber.Ctx) error {
   return c.Status(fiber.StatusCreated).JSON(walletResponse)
 }
 
-func UpdateWallet(c *fiber.Ctx) error {
+func FundWallet(c *fiber.Ctx) error {
   wallet_number := c.Params("wallet_number")
   var wallet Models.Wallet
 
@@ -84,7 +105,46 @@ func UpdateWallet(c *fiber.Ctx) error {
   }
 
   return c.Status(fiber.StatusOK).JSON(fiber.Map{
-    "message": "Wallet updated sucessfully",
+    "message": "Wallet funding sucessfully",
     "balance": wallet.Balance,
   })
+}
+
+func WihdrawFund(c *fiber.Ctx) error {
+  wallet_number := c.Params("wallet_number")
+  var wallet Models.Wallet
+
+  result := db.DB.Find(&wallet, "wallet_number=?", wallet_number)
+  if result.Error != nil {
+    return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+      "error": "Wallet number not found",
+    })
+  }
+  
+  var updatedWallet Models.Wallet
+  if err := c.BodyParser(&updatedWallet); err != nil {
+    return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+      "error": "Invalid request format",
+    })
+  }
+
+  if wallet.Balance < updatedWallet.Balance {
+    return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+      "error": "Insufficient funds",
+    })
+  }
+
+  wallet.Balance -= updatedWallet.Balance 
+
+  result = db.DB.Save(&wallet)
+  if result.Error != nil {
+    return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+      "error": "Failed to update wallet",
+    })
+  }
+
+  return c.Status(fiber.StatusOK).JSON(fiber.Map{
+    "message": "Withdrawal sucessfully",
+    "balance": wallet.Balance,
+  }) 
 }

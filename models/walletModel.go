@@ -26,6 +26,13 @@ type WalletResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type FundWallet struct {
+  ID  uuid.UUID
+  UserID  uuid.UUID
+  Funds float64
+  CreatedAt time.Time
+}
+
 func (Wallet) TableName() string {
   return "wallets"
 }

@@ -9,6 +9,7 @@ import (
 
 func Setup(app *fiber.App) {
   // users routes
+  app.Get("", controllers.Demo)
   app.Get("/api/users", config.AuthMiddleware, controllers.GetUser)
   app.Get("/api/users/:userId", controllers.GetUserId)
   app.Put("/api/users/:userId", controllers.UpdateUser)

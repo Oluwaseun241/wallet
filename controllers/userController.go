@@ -8,6 +8,12 @@ import (
 	"github.com/google/uuid"
 )
 
+func Demo(c *fiber.Ctx) error {
+  return c.Status(fiber.StatusOK).JSON(fiber.Map{
+    "status": "ok",
+  })
+}
+
 //Get all users
 func GetUser(c *fiber.Ctx) error {
   var users []Models.User

@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/Oluwaseun241/wallet/config"
 	"github.com/Oluwaseun241/wallet/routes"
@@ -16,7 +17,13 @@ func main() {
   app := fiber.New()
   app.Use(cors.New())
   routes.Setup(app)
-  err := app.Listen(":3000")
+  port := os.Getenv("PORT")
+  if port == "" {
+    port = ":3000"
+  } else {
+    port = ":" + port
+  }
+  err := app.Listen(port)
   if err != nil {
     log.Fatalf("Error starting server: %v", err)
   }

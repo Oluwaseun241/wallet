@@ -1,10 +1,12 @@
 package main
 
 import (
+	"log"
+
 	"github.com/Oluwaseun241/wallet/config"
 	"github.com/Oluwaseun241/wallet/routes"
 	"github.com/gofiber/fiber/v2"
-  "github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 
@@ -14,5 +16,8 @@ func main() {
   app := fiber.New()
   app.Use(cors.New())
   routes.Setup(app)
-  app.Listen("0.0.0.0:3000")
+  err := app.Listen(":3000")
+  if err != nil {
+    log.Fatalf("Error starting server: %v", err)
+  }
 }

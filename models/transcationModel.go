@@ -10,8 +10,8 @@ import (
 type Transaction struct {
   gorm.Model
   ID  uuid.UUID `gorm:"type:uuid;primaryKey;not null"`
-  SenderID  uuid.UUID `gorm:"type:uuid;not null"`
-  ReceiverID  uuid.UUID `gorm:"type:uuid;not null"`
+  SenderID  string `gorm:"type:string;not null"`
+  ReceiverID  string `gorm:"type:string;not null"`
   Amount  float64 `gorm:"not null"`
   CreatedAt time.Time `gorm:"not null;autoCreateTime"`
   UpdatedAt time.Time `gorm:"not null;autoUpdateTime"`

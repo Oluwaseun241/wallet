@@ -106,6 +106,7 @@ func FundWallet(c *fiber.Ctx) error {
 
   return c.Status(fiber.StatusOK).JSON(fiber.Map{
     "message": "Wallet funding sucessfully",
+    "success": true,
     "balance": wallet.Balance,
   })
 }
@@ -145,6 +146,7 @@ func WihdrawFund(c *fiber.Ctx) error {
 
   return c.Status(fiber.StatusOK).JSON(fiber.Map{
     "message": "Withdrawal sucessfully",
+    "success": true,
     "balance": wallet.Balance,
   }) 
 }

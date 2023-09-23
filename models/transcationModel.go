@@ -18,6 +18,15 @@ type Transaction struct {
 }
 
 
+type TranscationResponse struct {
+  ID  uuid.UUID `json:"id,omitempty"`
+	SenderID  string `json:"sender_id,omitempty"`
+	ReceiverID  string `json:"receiver_id,omitempty"`
+  Amount float64 `json:"amount,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 func (Transaction) TableName() string {
   return "transactions"
 }

@@ -50,6 +50,13 @@ func TransferFund(c *fiber.Ctx) error {
 		})
 	}
 
+  if transaction.Amount <= 0 {
+    return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+        "error":   "Invalid transaction",
+        "message": "Amount must be a positive number",
+    })
+  }
+
   if senderWallet.Balance < transaction.Amount {
     return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error":   "Insufficient funds",
@@ -57,11 +64,14 @@ func TransferFund(c *fiber.Ctx) error {
 		})
   }
 
+  transactionReference := Models.GenerateTransactionReference(senderWallet.UserID.String(), transaction.ReceiverID)
+
   transaction = Models.Transaction{
     ID: uuid.New(),
     SenderID: senderWalletNumber,
     ReceiverID: transaction.ReceiverID,
     Amount: transaction.Amount,
+    TransactionReference: transactionReference,
   }
   
   // Save the transaction and wallet updates to the database
@@ -99,5 +109,6 @@ func TransferFund(c *fiber.Ctx) error {
     "message": "Transfer was sucessful",
     "success": true,
     "balance": senderWallet.Balance,
+    "transaction_ref": transactionReference,
   })
 }

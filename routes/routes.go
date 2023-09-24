@@ -21,5 +21,5 @@ func Setup(app *fiber.App) {
   app.Post("/api/users/wallet", config.AuthMiddleware, controllers.NewWallet)
   app.Post("/api/users/wallet/:wallet_number", config.AuthMiddleware, controllers.FundWallet)
   app.Post("/api/users/wallet/withdraw/:wallet_number", config.AuthMiddleware, controllers.WihdrawFund)
-  app.Post("/api/users/wallet/transfer/:wallet_number", controllers.TransferFund)
+  app.Post("/api/users/wallet/transfer/:wallet_number", config.AuthMiddleware,controllers.TransferFund)
 }

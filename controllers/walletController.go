@@ -44,12 +44,7 @@ func NewWallet(c *fiber.Ctx) error {
     ID: uuid.New(),
     UserID: userID,
     WalletNumber: wallet_number,
-  }
-  if err := c.BodyParser(wallet); err != nil {
-    return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-      "error": "Invalid request format",
-    })
-  }
+  } 
 
   var existingWallet Models.Wallet
   if err := db.DB.Where("user_id = ?", userID).First(&existingWallet).Error; err == nil {

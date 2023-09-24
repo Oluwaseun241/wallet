@@ -5,6 +5,7 @@ import (
 	Models "github.com/Oluwaseun241/wallet/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+  "gorm.io/gorm"
 )
 
 func TransferFund(c *fiber.Ctx) error {
@@ -12,10 +13,15 @@ func TransferFund(c *fiber.Ctx) error {
   
   var senderWallet Models.Wallet
   if err := db.DB.Find(&senderWallet, "wallet_number=?", senderWalletNumber).Error; err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": "Sender's wallet not found",
-		})
+		if err == gorm.ErrRecordNotFound {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": "Sender's wallet not found",
+			})
 	}
+    return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Database error",
+		})
+  }
 
   var transaction Models.Transaction 
   if err := c.BodyParser(&transaction); err != nil {
@@ -33,9 +39,14 @@ func TransferFund(c *fiber.Ctx) error {
 
   // Check if the receiver's wallet exists
   var receiverWallet Models.Wallet
-  if err := db.DB.Find(&receiverWallet, "wallet_number=?", transaction.ReceiverID).Error; err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": "Receiver's wallet number not found",
+  if err := db.DB.Find(&receiverWallet, "wallet_number = ?", transaction.ReceiverID).First(&receiverWallet).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": "Receiver's wallet number not found",
+			})
+		}
+    return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Database error",
 		})
 	}
 
@@ -53,8 +64,40 @@ func TransferFund(c *fiber.Ctx) error {
     Amount: transaction.Amount,
   }
   
-  senderWallet.Balance -= transaction.Amount
-	receiverWallet.Balance += transaction.Amount
+  // Save the transaction and wallet updates to the database
+  tx := db.DB.Begin()
+  if err := tx.Create(&transaction).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to create transaction",
+		})
+	}
 
-  return c.Status(fiber.StatusCreated).JSON(transaction)
+  senderWallet.Balance -= transaction.Amount
+  if err := tx.Save(&senderWallet).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to update sender's wallet",
+		})
+	}
+	
+  receiverWallet.Balance += transaction.Amount
+  if err := tx.Save(&receiverWallet).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to update receiver's wallet",
+		})
+	}
+
+  if err := tx.Commit().Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Database transaction error",
+		})
+	}  
+
+  return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+    "message": "Transfer was sucessful",
+    "success": true,
+    "balance": senderWallet.Balance,
+  })
 }

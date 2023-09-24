@@ -5,6 +5,7 @@ import (
 	db "github.com/Oluwaseun241/wallet/config"
 	Models "github.com/Oluwaseun241/wallet/models"
 	"github.com/gofiber/fiber/v2"
+  "github.com/google/uuid"
 )
 
 //User Login
@@ -40,6 +41,43 @@ func LoginUser(c *fiber.Ctx) error {
     "message": "Success",
     "token": token,
   })
+}
+
+// Token refresh endpoint
+func ResfreshToken(c *fiber.Ctx) error {
+  oldToken := c.Get("Authorization")
+
+  claims, err := auth.ValidateToken(oldToken)
+  if err != nil {
+    return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+  }
+  
+  userIDStr, ok := claims["sub"].(string)
+  if !ok {
+      return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+          "error": "Invalid user ID format",
+      })
+  }
+
+  userID, err := uuid.Parse(userIDStr)
+  if err != nil {
+      return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+          "error": "Failed to parse user ID",
+      })
+  }
+
+  newToken, err := auth.GenerateToken(userID)
+  if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to generate new token",
+		})
+	}
+
+  return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"token": newToken,
+	})
 }
 
 // Logout

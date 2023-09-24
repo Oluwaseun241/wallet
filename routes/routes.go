@@ -15,6 +15,7 @@ func Setup(app *fiber.App) {
   app.Post("/api/auth/register", controllers.NewUser)
   //auth routes
   app.Post("/api/auth/login", controllers.LoginUser)
+  app.Post("/api/auth/refresh-token", auth.AuthMiddleware,controllers.ResfreshToken)
 
   //wallet routes
   app.Get("/api/users/wallet/:userId", auth.AuthMiddleware, controllers.GetWallet)

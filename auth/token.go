@@ -27,6 +27,14 @@ func AuthMiddleware(c *fiber.Ctx) error {
     })
   }
 
+  expirationTime := int64(claims["exp"].(float64))
+	currentTime := time.Now().Unix()
+	if currentTime > expirationTime {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Token has expired",
+		})
+	}
+
   userID, ok := claims["sub"].(string)
   if !ok {
     return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{

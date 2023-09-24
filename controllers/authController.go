@@ -1,8 +1,7 @@
 package controllers
 
 import (
-
-	"github.com/Oluwaseun241/wallet/config"
+	"github.com/Oluwaseun241/wallet/auth"
 	db "github.com/Oluwaseun241/wallet/config"
 	Models "github.com/Oluwaseun241/wallet/models"
 	"github.com/gofiber/fiber/v2"
@@ -28,7 +27,7 @@ func LoginUser(c *fiber.Ctx) error {
   
   // JWT
   userID := user.ID
-  token, err := config.GenerateToken(userID)
+  token, err := auth.GenerateToken(userID)
   if err != nil {
     return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
       "success": false,

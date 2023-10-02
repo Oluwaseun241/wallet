@@ -8,7 +8,7 @@ import (
   "github.com/google/uuid"
 )
 
-//User Login
+// User Login
 func LoginUser(c *fiber.Ctx) error {
   var loginReq Models.SignInInput
   if err := c.BodyParser(&loginReq); err != nil {
@@ -17,6 +17,7 @@ func LoginUser(c *fiber.Ctx) error {
       "message": "Invalid request format",
     })
   }
+
   // Auth
   user, err := Models.Authenticate(db.DB, loginReq.Email, loginReq.Password)
   if err != nil {
@@ -43,7 +44,7 @@ func LoginUser(c *fiber.Ctx) error {
   })
 }
 
-// Token refresh endpoint
+// Token refresh
 func ResfreshToken(c *fiber.Ctx) error {
   oldToken := c.Get("Authorization")
 
@@ -81,6 +82,6 @@ func ResfreshToken(c *fiber.Ctx) error {
 }
 
 // Logout
-func Validate() {
+func LogoutUser() {
   
 }

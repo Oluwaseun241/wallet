@@ -29,7 +29,8 @@ func LoginUser(c *fiber.Ctx) error {
   
   // JWT
   userID := user.ID
-  token, err := auth.GenerateToken(userID)
+  username := user.Name
+  token, err := auth.GenerateToken(userID, username)
   if err != nil {
     return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
       "success": false,
@@ -69,7 +70,10 @@ func ResfreshToken(c *fiber.Ctx) error {
       })
   }
 
-  newToken, err := auth.GenerateToken(userID)
+  user := Models.User{}
+  username := user.Name
+
+  newToken, err := auth.GenerateToken(userID, username)
   if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to generate new token",

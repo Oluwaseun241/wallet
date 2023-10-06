@@ -36,6 +36,7 @@ func AuthMiddleware(c *fiber.Ctx) error {
 	}
 
   userID, ok := claims["sub"].(string)
+  username, ok := claims["username"].(string)
   if !ok {
     return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Unauthorized",
@@ -43,13 +44,15 @@ func AuthMiddleware(c *fiber.Ctx) error {
   }
 
   c.Locals("userID", userID)
+  c.Locals("username", username)
   return c.Next()
 }
 
 
-func GenerateToken(userID uuid.UUID) (string, error) { 
+func GenerateToken(userID uuid.UUID, username string) (string, error) { 
   claims := jwt.MapClaims{
     "sub": userID.String(),
+    "username": username,
     "exp": time.Now().Add(time.Hour * 24).Unix(),
   }
 

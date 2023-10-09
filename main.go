@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"os"
+	"os"	
 
 	"github.com/Oluwaseun241/wallet/config"
 	"github.com/Oluwaseun241/wallet/routes"

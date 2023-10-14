@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/Oluwaseun241/wallet/auth"
+	"github.com/Oluwaseun241/wallet/auths"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )

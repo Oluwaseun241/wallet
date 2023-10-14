@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"github.com/Oluwaseun241/wallet/auth"
+	"github.com/Oluwaseun241/wallet/auths"
 	db "github.com/Oluwaseun241/wallet/config"
 	Models "github.com/Oluwaseun241/wallet/models"
 	"github.com/gofiber/fiber/v2"

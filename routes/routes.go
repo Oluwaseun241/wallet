@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/Oluwaseun241/wallet/auth"
+	"github.com/Oluwaseun241/wallet/auths"
 	"github.com/Oluwaseun241/wallet/controllers"
 	"github.com/gofiber/fiber/v2"
 )

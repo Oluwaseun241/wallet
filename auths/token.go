@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const secretKey = os.Getenv("SECRET_KEY")
+var secretKey = os.Getenv("SECRET_KEY")
 
 // Middleware
 func AuthMiddleware(c *fiber.Ctx) error {

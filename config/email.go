@@ -1,8 +1,9 @@
-package auth
+package config
 
 import (
+	"fmt"
 	"os"
-  "fmt"
+	"strconv"
 
 	"github.com/Oluwaseun241/wallet/models"
 	"github.com/go-mail/mail"
@@ -21,7 +22,12 @@ func SendEmail(user *models.User, data *EmailData) {
   smtpUser := os.Getenv("SMTP_USER")
 	to := user.Email
 	smtpHost := os.Getenv("SMTP_HOST")
-	smtpPort := os.Getenv("SMTP_PORT")
+	smtpPortStr := os.Getenv("SMTP_PORT")
+  
+  smtpPort, err := strconv.Atoi(smtpPortStr)
+  if err != nil {
+		panic(err)
+	}
 
   m := mail.NewMessage()
 
@@ -36,7 +42,7 @@ func SendEmail(user *models.User, data *EmailData) {
 	</body></html>`, data.FirstName, data.URL, data.URL))
 
   d := mail.NewDialer(smtpHost, smtpPort, smtpUser, smtpPass)
-  if err := d.DailAndSend(m); err != nil {
+  if err := d.DialAndSend(m); err != nil {
     panic(err)
   }
 }

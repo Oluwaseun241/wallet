@@ -36,9 +36,6 @@ func GetUser(c *fiber.Ctx) error {
 
 // Create New User
 func NewUser(c *fiber.Ctx) error {
-  // user := &Models.User{
-  //   ID: uuid.New(),
-  // }
 
   var input Models.SignUpInput
   if err := c.BodyParser(&input); err != nil {
@@ -109,13 +106,13 @@ func NewUser(c *fiber.Ctx) error {
 
   // Send Email
 
-  emailData := auth.EmailData {
-    URL: "/verifyemail/",
+  emailData := db.EmailData {
+    URL: "http://127.0.0.1:8000/api/auth/verifyemail/"+ code,
     FirstName: firstName,
     Subject: "Your account verification code",
   }
   
-  auth.SendEmail(&newUser, &emailData)
+  db.SendEmail(&newUser, &emailData)
 
   userResponse := Models.UserResponse{
     ID:        newUser.ID,
@@ -124,7 +121,11 @@ func NewUser(c *fiber.Ctx) error {
 		CreatedAt: newUser.CreatedAt,
 		UpdatedAt: newUser.UpdatedAt,
   }
-  return c.Status(fiber.StatusCreated).JSON(userResponse)
+  return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+    "status": true,
+    "message": "user created sucessfully"+ newUser.Email,
+    "data": userResponse,
+  })
 }
 
 //Get by ID
@@ -143,7 +144,10 @@ func GetUserId(c* fiber.Ctx) error {
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
   }
-  return c.Status(fiber.StatusOK).JSON(userResponse)
+  return c.Status(fiber.StatusOK).JSON(fiber.Map{
+    "status": true, 
+    "data": userResponse,
+  })
 }
 
 //Update User
@@ -176,6 +180,7 @@ func UpdateUser(c *fiber.Ctx) error {
   }
 
   return c.Status(fiber.StatusOK).JSON(fiber.Map{
+    "status": true,
     "message": "User updated successfully",
   })
 }

@@ -2,10 +2,10 @@ package config
 
 import (
 	"fmt"
-	//"log"
+	"log"
 	"os"
 
-	//"github.com/joho/godotenv"
+	"github.com/joho/godotenv"
   "gorm.io/driver/postgres"
 
 	Models "github.com/Oluwaseun241/wallet/models"
@@ -15,10 +15,15 @@ import (
 var DB *gorm.DB
 
 func InitDB() {
-  // // Load env
-  // if err := godotenv.Load(); err != nil {
-  //   log.Fatal("Error loading .env file")
-  // }
+
+  env := os.Getenv("APP_ENV")
+  
+  if env != "production" {
+    // Load env
+    if err := godotenv.Load(); err != nil {
+      log.Fatal("Error loading .env file")
+    }
+  } 
   
   dbHost := os.Getenv("DB_HOST")
   dbPort := os.Getenv("DB_PORT")

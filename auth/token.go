@@ -2,13 +2,15 @@ package auth
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
-const secretKey = "manchester1"
+
+const secretKey = os.Getenv("SECRET_KEY")
 
 // Middleware
 func AuthMiddleware(c *fiber.Ctx) error {

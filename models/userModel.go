@@ -16,14 +16,24 @@ type User struct {
   Name  string `gorm:"type:varchar(50);not null"`
   Email string `gorm:"uniqueIndex;not null"`
   Password  string `gorm:"not null"`
+  VerificationCode  string
+  Verified  bool  `gorm:"not null"`
   CreatedAt time.Time `gorm:"not null;autoCreateTime"`
 	UpdatedAt time.Time `gorm:"not null;autoUpdateTime"`
   Wallets []Wallet
 }
 
+
 type SignInInput struct {
   Email string  `json:"email" binding:"required"`
   Password  string  `json:"password" binding:"required"`
+}
+
+type SignUpInput struct {
+  Name  string  `json:"name" binding:"required"`
+  Email string  `json:"email" binding:"required"`
+  Password  string  `json:"password" binding:"required,min=8"`
+  PasswordConfirm string  `json:"passwordConfirm" binding:"required"`
 }
 
 type UserResponse struct {

@@ -18,7 +18,7 @@ func InitDB() {
 
   env := os.Getenv("APP_ENV")
   
-  if env != "production" {
+  if env != "railway" {
     // Load env
     if err := godotenv.Load(); err != nil {
       log.Fatal("Error loading .env file")

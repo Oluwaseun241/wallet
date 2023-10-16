@@ -101,13 +101,13 @@ func NewUser(c *fiber.Ctx) error {
 
   var firstName = newUser.Name
   if strings.Contains(firstName, " ") {
-    firstName = strings.Split(firstName, " ")[1]
+    firstName = strings.Split(firstName, " ")[0]
   }
 
   // Send Email
 
   emailData := db.EmailData {
-    URL: "http://127.0.0.1:8000/api/auth/verifyemail/"+ code,
+    URL: "http://127.0.0.1:8000/api/auth/verifyemail/"+verification_code,
     FirstName: firstName,
     Subject: "Your account verification code",
   }
@@ -123,7 +123,7 @@ func NewUser(c *fiber.Ctx) error {
   }
   return c.Status(fiber.StatusCreated).JSON(fiber.Map{
     "status": true,
-    "message": "user created sucessfully"+ newUser.Email,
+    "message": "User created sucessfully confirmation email sent to "+ newUser.Email,
     "data": userResponse,
   })
 }

@@ -5,7 +5,7 @@ import (
 	db "github.com/Oluwaseun241/wallet/config"
 	Models "github.com/Oluwaseun241/wallet/models"
 	"github.com/gofiber/fiber/v2"
-  "github.com/google/uuid"
+	"github.com/google/uuid"
 )
 
 // User Login
@@ -83,6 +83,36 @@ func ResfreshToken(c *fiber.Ctx) error {
   return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"token": newToken,
 	})
+}
+
+func VerifyEmail(c *fiber.Ctx) error {
+  verification_code := c.Params("verificationCode")
+
+  var updatedUser Models.User
+  result := db.DB.First(&updatedUser, "verification_code = ?", verification_code)
+  if result.Error != nil {
+    return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+      "status": false,
+      "message": "Invalid verification code or user doesn't exists",
+    })
+  }
+
+  if updatedUser.Verified {
+    return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+      "status": false,
+      "message": "User already verified",
+    })
+  }
+  
+
+  updatedUser.VerificationCode = ""
+  updatedUser.Verified = true
+  db.DB.Save(&updatedUser)
+ 
+  return c.Status(fiber.StatusOK).JSON(fiber.Map{
+    "status": true,
+    "message": "Email verified successfully",
+  })
 }
 
 // Logout

@@ -106,8 +106,8 @@ func TransferFund(c *fiber.Ctx) error {
 	}  
 
   return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-    "message": "Transfer was sucessful",
-    "success": true,
+    "status": true,
+    "message": "Transfer was sucessful", 
     "balance": senderWallet.Balance,
     "transaction_ref": transactionReference,
   })

@@ -13,7 +13,7 @@ func LoginUser(c *fiber.Ctx) error {
   var loginReq Models.SignInInput
   if err := c.BodyParser(&loginReq); err != nil {
     return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-      "success": false,
+      "status": false,
       "message": "Invalid request format",
     })
   }
@@ -22,7 +22,7 @@ func LoginUser(c *fiber.Ctx) error {
   user, err := Models.Authenticate(db.DB, loginReq.Email, loginReq.Password)
   if err != nil {
     return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"success": false,
+			"status": false,
 			"message": "Invalid credentials",
 		})
   }
@@ -33,13 +33,13 @@ func LoginUser(c *fiber.Ctx) error {
   token, err := auth.GenerateToken(userID, username)
   if err != nil {
     return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-      "success": false,
+      "status": false,
       "message": "Failed to generate token",
     })
   }
 
   return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-    "success": true,
+    "status": true,
     "message": "Success",
     "token": token,
   })
@@ -52,7 +52,8 @@ func ResfreshToken(c *fiber.Ctx) error {
   claims, err := auth.ValidateToken(oldToken)
   if err != nil {
     return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "Unauthorized",
+      "status": false,
+      "message": "Unauthorized",
 		})
   }
   
@@ -81,7 +82,9 @@ func ResfreshToken(c *fiber.Ctx) error {
 	}
 
   return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"token": newToken,
+    "status": true,
+    "message": "Refresh token successfully generated",
+    "token": newToken,
 	})
 }
 
